@@ -28,9 +28,6 @@
                     accessToken,
                     () => Promise.resolve(accessToken)
                 )
-                .withConf({
-                    lang: 'en',
-                })
                 .on('idCheck.onError', (error) => {
                     console.error("Ошибка Sumsub:", error);
                 })
