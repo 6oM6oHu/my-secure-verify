@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Verification</title>
+    <script src="https://static.sumsub.com/idensic/static/sns-websdk.js"></script>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: sans-serif; }
+        #sumsub-websdk-container { width: 100%; height: 100%; }
+        .error-message { 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100%; color: red; font-weight: bold; padding: 20px; text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="sumsub-websdk-container"></div>
+    
+    <script>
+        // 1. Магия масштабирования: читаем токен из ссылки (параметр ?token=...)
+        const urlParams = new URLSearchParams(window.location.search);
+        const accessToken = urlParams.get('token');
+
+        // 2. Если токена в ссылке нет, пишем ошибку
+        if (!accessToken) {
+            document.getElementById('sumsub-websdk-container').innerHTML = 
+                '<div class="error-message">Ошибка: Ссылка неполная. Нет токена доступа.</div>';
+        } else {
+            // 3. Если токен есть, запускаем Sumsub
+            const snsWebSdkInstance = snsWebSdk.init(
+                    accessToken, 
+                    () => Promise.resolve(accessToken)
+                )
+                .withConf({
+                    lang: 'ru', // Язык можно менять
+                })
+                .on('idCheck.onError', (error) => {
+                    console.log('Ошибка SDK:', error);
+                })
+                .build();
+
+            snsWebSdkInstance.launch('#sumsub-websdk-container');
+        }
+    </script>
+</body>
+</html>
